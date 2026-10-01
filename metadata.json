@@ -1,0 +1,6 @@
+{
+  "name": "Hiranandani Schools Admissions Readiness Audit & Evidence Scorecard",
+  "description": "Executive 3-slide audit summary and evidence-backed scorecard for Hiranandani Group of Schools (Powai, International, Thane, Panvel, Chennai) assessing admissions readiness, faculty disclosure, board results, and fee transparency.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
