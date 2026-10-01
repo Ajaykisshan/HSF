@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SCHOOLS_DATA, SchoolAudit } from '../data/auditData';
+import { SCHOOLS_DATA, AUDIT_METADATA, SCORE_FIXES, fixGain } from '../data/auditData';
 import { 
   Compass, 
   Sparkles, 
@@ -84,15 +84,15 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
     schoolName: "Hiranandani Foundation School, Thane",
     googleCategory: "General education school",
     googleProfilePhotos: 39,
-    googleRatingText: "0 reviews (Suppressed by Google category)",
+    googleRatingText: "0 reviews visible on Google",
     googleMapsUrl: "https://www.google.com/maps/search/Hiranandani+Foundation+School+Thane",
     directoryName: "Justdial",
     directoryRatingText: "4.1★ (180 reviews)",
-    directoryUrl: "https://www.justdial.com/Thane/Hiranandani-Foundation-School-Patlipada-Thane-West/022PXX22-XX22-000452358814-F3X3_BZDET",
+    directoryUrl: "https://www.google.com/search?q=Hiranandani+Foundation+School+Patlipada+Thane+West+Thane+justdial",
     websiteGalleryPhotos: 24,
     websiteUrl: "https://www.hfsthane.in",
-    photoScore: "2 / 3 pts (Grade: Moderate Density)",
-    rubricExplanation: "The audit rubric evaluates Google Maps Knowledge Panel photo volume: 100+ photos = 3/3 pts; 50–99 photos = 2.5/3; 20–49 photos = 2/3; 1–19 photos = 1/3. HFS Thane has 39 photos on its Google Maps profile (and 24 on its website gallery).",
+    photoScore: "1 / 3 pts (20–49 photos)",
+    rubricExplanation: "The audit rubric evaluates Google Maps Knowledge Panel photo volume: 100+ photos = 3/3 pts; 50–99 photos = 2/3; 20–49 photos = 1/3; under 20 photos = 0/3. HFS Thane has 39 photos on its Google Maps profile (and 24 on its website gallery).",
     competitors: [
       { 
         schoolName: "Billabong High International School", 
@@ -104,7 +104,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Billabong+High+International+School+Thane",
         directoryName: "Justdial",
         directoryRatingText: "4.2★ (692 reviews)",
-        directoryUrl: "https://www.justdial.com/Thane/Billabong-High-International-School-Near-T-J-S-B-Bank-Wagle-Industrial-Estate/022PXX22-XX22-090919133857-E9S9_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Billabong+High+International+School+Near+T+J+S+B+Bank+Wagle+Industrial+Estate+Thane+justdial",
         websitePhotosCount: 45,
         websiteUrl: "https://www.billabongthane.com",
         isPrimaryCompetitor: true 
@@ -119,7 +119,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Podar+International+School+Thane+Ghodbunder",
         directoryName: "Justdial",
         directoryRatingText: "4.1★ (210 reviews)",
-        directoryUrl: "https://www.justdial.com/Thane/Podar-International-School-Near-D-Mart-Kasarvadavali/022PXX22-XX22-120302151608-F4B8_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Podar+International+School+Near+D+Mart+Kasarvadavali+Thane+justdial",
         websitePhotosCount: 35,
         websiteUrl: "https://www.podareducation.org/school/thane",
         isPrimaryCompetitor: true 
@@ -129,12 +129,12 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         locality: "Pokhran Road, Thane", 
         googleCategory: "ICSE school", 
         googlePhotosCount: 53, 
-        googleRatingText: "0 reviews (Suppressed on Maps)", 
+        googleRatingText: "0 reviews visible on Google", 
         googleMapsStatus: "suppressed", 
         googleMapsUrl: "https://www.google.com/maps/search/Smt.+Sunitidevi+Singhania+School+Thane",
         directoryName: "Justdial",
         directoryRatingText: "4.4★ (114 reviews)",
-        directoryUrl: "https://www.justdial.com/Thane/Smt-Sunitidevi-Singhania-School-Pokhran-Road-No-1-Thane-West/022PXX22-XX22-160105151515-A4Q7_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Smt+Sunitidevi+Singhania+School+Pokhran+Road+No+1+Thane+West+Thane+justdial",
         websitePhotosCount: 40,
         websiteUrl: "https://www.singhaniaschool.org",
         isPrimaryCompetitor: true 
@@ -149,7 +149,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Lodha+World+School+Majiwada+Thane",
         directoryName: "Justdial",
         directoryRatingText: "4.0★ (65 reviews)",
-        directoryUrl: "https://www.justdial.com/Thane/Lodha-World-School-Majiwada/022PXX22-XX22-130403160215-L5J5_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Lodha+World+School+Majiwada+Thane+justdial",
         websitePhotosCount: 30,
         websiteUrl: "https://www.lodhaworldschool.com",
         isPrimaryCompetitor: false 
@@ -164,7 +164,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/VIBGYOR+High+School+Airoli",
         directoryName: "Justdial",
         directoryRatingText: "4.2★ (120 reviews)",
-        directoryUrl: "https://www.justdial.com/Navi-Mumbai/Vibgyor-High-School-Airoli/022PXX22-XX22-110629163012-G4L2_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Vibgyor+High+School+Airoli+Navi+Mumbai+justdial",
         websitePhotosCount: 55,
         websiteUrl: "https://www.vibgyorhigh.com",
         isPrimaryCompetitor: false 
@@ -175,14 +175,14 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
     schoolName: "Hiranandani Upscale School (HUS), Chennai",
     googleCategory: "International school",
     googleProfilePhotos: 68,
-    googleRatingText: "0 reviews (Suppressed by Google category)",
+    googleRatingText: "0 reviews visible on Google",
     googleMapsUrl: "https://www.google.com/maps/search/Hiranandani+Upscale+School+Egattur+Chennai",
     directoryName: "Justdial",
     directoryRatingText: "3.9★ (193 reviews)",
-    directoryUrl: "https://www.justdial.com/Chennai/Hiranandani-Upscale-School-Opposite-SIPCOT-IT-Park-Egattur/044PXX44-XX44-110629163012-G4L3_BZDET",
+    directoryUrl: "https://www.google.com/search?q=Hiranandani+Upscale+School+Opposite+SIPCOT+IT+Park+Egattur+Chennai+justdial",
     websiteGalleryPhotos: 42,
     websiteUrl: "https://hus.edu.in",
-    photoScore: "3 / 3 pts (Grade: Strong Density)",
+    photoScore: "2 / 3 pts (50–99 photos)",
     rubricExplanation: "HUS Chennai has 68 photos uploaded on its Google Maps knowledge panel plus an active gallery of 42 facility photos on hus.edu.in.",
     competitors: [
       { 
@@ -195,7 +195,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Gateway+International+School+Padur",
         directoryName: "Justdial",
         directoryRatingText: "4.2★ (52 reviews)",
-        directoryUrl: "https://www.justdial.com/Chennai/Gateway-International-School-Near-Chettinad-Health-City-Padur/044PXX44-XX44-100223120615-K1R1_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Gateway+International+School+Near+Chettinad+Health+City+Padur+Chennai+justdial",
         websitePhotosCount: 50,
         websiteUrl: "https://gatewayschools.edu.in",
         isPrimaryCompetitor: true 
@@ -210,7 +210,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Amethyst+International+School+Navalur+Chennai",
         directoryName: "Justdial",
         directoryRatingText: "4.1★ (98 reviews)",
-        directoryUrl: "https://www.justdial.com/Chennai/Amethyst-International-School-Navalur/044PXX44-XX44-171221160415-J6K3_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Amethyst+International+School+Navalur+Chennai+justdial",
         websitePhotosCount: 35,
         websiteUrl: "https://amethystinternationalschool.in",
         isPrimaryCompetitor: true 
@@ -220,12 +220,12 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         locality: "Kelambakkam, OMR", 
         googleCategory: "International school", 
         googlePhotosCount: 154, 
-        googleRatingText: "0 reviews (Suppressed on Maps)", 
+        googleRatingText: "0 reviews visible on Google", 
         googleMapsStatus: "suppressed", 
         googleMapsUrl: "https://www.google.com/maps/search/Chettinad+Sarvalokaa+Education+Chennai",
         directoryName: "Justdial",
         directoryRatingText: "3.8★ (75 reviews)",
-        directoryUrl: "https://www.justdial.com/Chennai/Chettinad-Sarvalokaa-Education-Kelambakkam/044PXX44-XX44-180124110825-G7P6_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Chettinad+Sarvalokaa+Education+Kelambakkam+Chennai+justdial",
         websitePhotosCount: 48,
         websiteUrl: "https://sarvalokaa.org",
         isPrimaryCompetitor: true 
@@ -236,14 +236,14 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
     schoolName: "Hiranandani Foundation School, Powai",
     googleCategory: "General education school",
     googleProfilePhotos: 49,
-    googleRatingText: "0 reviews (Suppressed by Google category)",
+    googleRatingText: "0 reviews visible on Google",
     googleMapsUrl: "https://www.google.com/maps/search/Hiranandani+Foundation+School+Powai",
     directoryName: "Justdial",
     directoryRatingText: "4.2★ (310 reviews)",
-    directoryUrl: "https://www.justdial.com/Mumbai/Hiranandani-Foundation-School-Hiranandani-Gardens-Powai/022PXX22-XX22-000452358810-F3X1_BZDET",
+    directoryUrl: "https://www.google.com/search?q=Hiranandani+Foundation+School+Hiranandani+Gardens+Powai+Mumbai+justdial",
     websiteGalleryPhotos: 30,
-    websiteUrl: "https://www.hfspowai.co.in",
-    photoScore: "2 / 3 pts (Grade: Moderate Density)",
+    websiteUrl: "https://www.hiranandanifoundationschoolpowai.com",
+    photoScore: "1 / 3 pts (20–49 photos)",
     rubricExplanation: "HFS Powai has 49 photos on Google Maps. Direct competitor Podar Powai across the road has 263 photos (5.3x more visual proof).",
     competitors: [
       { 
@@ -256,7 +256,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Podar+International+School+Powai",
         directoryName: "Justdial",
         directoryRatingText: "4.3★ (480 reviews)",
-        directoryUrl: "https://www.justdial.com/Mumbai/Podar-International-School-Opposite-Hiranandani-Gardens-Powai/022PXX22-XX22-100223120615-K1R2_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Podar+International+School+Opposite+Hiranandani+Gardens+Powai+Mumbai+justdial",
         websitePhotosCount: 60,
         websiteUrl: "https://www.podareducation.org/school/powai",
         isPrimaryCompetitor: true 
@@ -266,12 +266,12 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         locality: "Raheja Vihar, Powai", 
         googleCategory: "ICSE school", 
         googlePhotosCount: 185, 
-        googleRatingText: "0 reviews (Suppressed on Maps)", 
+        googleRatingText: "0 reviews visible on Google", 
         googleMapsStatus: "suppressed", 
         googleMapsUrl: "https://www.google.com/maps/search/Bombay+Scottish+School+Powai",
         directoryName: "Justdial",
         directoryRatingText: "4.5★ (310 reviews)",
-        directoryUrl: "https://www.justdial.com/Mumbai/Bombay-Scottish-School-Raheja-Vihar-Powai/022PXX22-XX22-000452358812-F3X2_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Bombay+Scottish+School+Raheja+Vihar+Powai+Mumbai+justdial",
         websitePhotosCount: 40,
         websiteUrl: "https://bombayscottish.in/powai",
         isPrimaryCompetitor: true 
@@ -286,7 +286,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/S+M+Shetty+High+School+Powai",
         directoryName: "Justdial",
         directoryRatingText: "4.2★ (350 reviews)",
-        directoryUrl: "https://www.justdial.com/Mumbai/S-M-Shetty-High-School-Powai/022PXX22-XX22-000452358815-F3X4_BZDET",
+        directoryUrl: "https://www.google.com/search?q=S+M+Shetty+High+School+Powai+Mumbai+justdial",
         websitePhotosCount: 50,
         websiteUrl: "https://smshettyinstitute.org",
         isPrimaryCompetitor: true 
@@ -301,10 +301,10 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
     googleMapsUrl: "https://www.google.com/maps/search/HFS+International+Powai",
     directoryName: "Justdial",
     directoryRatingText: "4.1★ (85 reviews)",
-    directoryUrl: "https://www.justdial.com/Mumbai/HFS-International-Hiranandani-Gardens-Powai/022PXX22-XX22-090919133857-E9S8_BZDET",
+    directoryUrl: "https://www.google.com/search?q=HFS+International+Hiranandani+Gardens+Powai+Mumbai+justdial",
     websiteGalleryPhotos: 18,
     websiteUrl: "https://www.hfsinternationalpowai.com",
-    photoScore: "1 / 3 pts (Grade: Critical Blunder)",
+    photoScore: "0 / 3 pts (under 20 photos)",
     rubricExplanation: "HFS International was erroneously categorized on Google Maps as a 'Building' with only 1 photo, no phone, and no website. Prospective IB parents searching Google see a barren, unverified entry.",
     competitors: [
       { 
@@ -317,7 +317,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Podar+International+School+Powai",
         directoryName: "Justdial",
         directoryRatingText: "4.3★ (480 reviews)",
-        directoryUrl: "https://www.justdial.com/Mumbai/Podar-International-School-Opposite-Hiranandani-Gardens-Powai/022PXX22-XX22-100223120615-K1R2_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Podar+International+School+Opposite+Hiranandani+Gardens+Powai+Mumbai+justdial",
         websitePhotosCount: 60,
         websiteUrl: "https://www.podareducation.org/school/powai",
         isPrimaryCompetitor: true 
@@ -332,7 +332,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Billabong+High+International+Malad",
         directoryName: "Justdial",
         directoryRatingText: "4.2★ (310 reviews)",
-        directoryUrl: "https://www.justdial.com/Mumbai/Billabong-High-International-School-Malad-West/022PXX22-XX22-110629163012-G4L5_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Billabong+High+International+School+Malad+West+Mumbai+justdial",
         websitePhotosCount: 50,
         websiteUrl: "https://billabonghighschool.com",
         isPrimaryCompetitor: true 
@@ -342,12 +342,12 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         locality: "Goregaon East", 
         googleCategory: "International school", 
         googlePhotosCount: 195, 
-        googleRatingText: "0 reviews (Suppressed on Maps)", 
+        googleRatingText: "0 reviews visible on Google", 
         googleMapsStatus: "suppressed", 
         googleMapsUrl: "https://www.google.com/maps/search/Oberoi+International+School+Goregaon",
         directoryName: "Justdial",
         directoryRatingText: "4.6★ (180 reviews)",
-        directoryUrl: "https://www.justdial.com/Mumbai/Oberoi-International-School-Goregaon-East/022PXX22-XX22-090919133857-E9S6_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Oberoi+International+School+Goregaon+East+Mumbai+justdial",
         websitePhotosCount: 65,
         websiteUrl: "https://oberoi-is.org",
         isPrimaryCompetitor: true 
@@ -358,14 +358,14 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
     schoolName: "Thriveni Academy, Chennai",
     googleCategory: "Secondary school",
     googleProfilePhotos: 23,
-    googleRatingText: "0 reviews (Suppressed by Google category)",
+    googleRatingText: "0 reviews visible on Google",
     googleMapsUrl: "https://www.google.com/maps/search/Thriveni+Academy+Oragadam",
     directoryName: "Justdial",
     directoryRatingText: "4.1★ (38 reviews)",
-    directoryUrl: "https://www.justdial.com/Chennai/Thriveni-Academy-Oragadam/044PXX44-XX44-150124110825-G7P8_BZDET",
+    directoryUrl: "https://www.google.com/search?q=Thriveni+Academy+Oragadam+Chennai+justdial",
     websiteGalleryPhotos: 16,
     websiteUrl: "https://www.thriveniacademy.com",
-    photoScore: "2 / 3 pts (Grade: Low-Moderate Density)",
+    photoScore: "1 / 3 pts (20–49 photos)",
     rubricExplanation: "Thriveni Academy has 23 photos on its Google Maps profile. Direct Oragadam peers maintain 64 to 98 campus photos.",
     competitors: [
       { 
@@ -373,12 +373,12 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         locality: "Oragadam, Chennai", 
         googleCategory: "CBSE school", 
         googlePhotosCount: 64, 
-        googleRatingText: "0 reviews (Suppressed on Maps)", 
+        googleRatingText: "0 reviews visible on Google", 
         googleMapsStatus: "suppressed", 
         googleMapsUrl: "https://www.google.com/maps/search/Maharishi+Vidya+Mandir+Oragadam",
         directoryName: "Justdial",
         directoryRatingText: "4.3★ (75 reviews)",
-        directoryUrl: "https://www.justdial.com/Chennai/Maharishi-Vidya-Mandir-Oragadam/044PXX44-XX44-160124110825-G7P9_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Maharishi+Vidya+Mandir+Oragadam+Chennai+justdial",
         websitePhotosCount: 25,
         websiteUrl: "https://mvmoragadam.com",
         isPrimaryCompetitor: true 
@@ -393,7 +393,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Amethyst+International+School+Chennai",
         directoryName: "Justdial",
         directoryRatingText: "4.1★ (98 reviews)",
-        directoryUrl: "https://www.justdial.com/Chennai/Amethyst-International-School-Navalur/044PXX44-XX44-171221160415-J6K3_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Amethyst+International+School+Navalur+Chennai+justdial",
         websitePhotosCount: 35,
         websiteUrl: "https://amethystinternationalschool.in",
         isPrimaryCompetitor: true 
@@ -404,14 +404,14 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
     schoolName: "Hiranandani Trust School, Panvel",
     googleCategory: "School",
     googleProfilePhotos: 11,
-    googleRatingText: "0 reviews (Suppressed by Google category)",
+    googleRatingText: "0 reviews visible on Google",
     googleMapsUrl: "https://www.google.com/maps/search/Hiranandani+Trust+School+Panvel",
     directoryName: "Justdial",
     directoryRatingText: "3.8★ (24 reviews)",
-    directoryUrl: "https://www.justdial.com/Navi-Mumbai/Hiranandani-Trust-School-Fortune-City-Panvel/022PXX22-XX22-180124110825-G7P7_BZDET",
+    directoryUrl: "https://www.google.com/search?q=Hiranandani+Trust+School+Fortune+City+Panvel+Navi+Mumbai+justdial",
     websiteGalleryPhotos: 12,
     websiteUrl: "https://www.htspanvel.com",
-    photoScore: "1 / 3 pts (Grade: Severe Deficit)",
+    photoScore: "0 / 3 pts (under 20 photos)",
     rubricExplanation: "HTS Panvel at Fortune City has only 11 photos on Google Maps. Navi Mumbai peers feature 312 to 534 campus photos.",
     competitors: [
       { 
@@ -419,12 +419,12 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         locality: "Nerul, Navi Mumbai", 
         googleCategory: "CBSE school", 
         googlePhotosCount: 534, 
-        googleRatingText: "0 reviews (Suppressed on Maps)", 
+        googleRatingText: "0 reviews visible on Google", 
         googleMapsStatus: "suppressed", 
         googleMapsUrl: "https://www.google.com/maps/search/Delhi+Public+School+Nerul+Navi+Mumbai",
         directoryName: "Justdial",
         directoryRatingText: "4.5★ (650 reviews)",
-        directoryUrl: "https://www.justdial.com/Navi-Mumbai/Delhi-Public-School-Nerul/022PXX22-XX22-000452358818-F3X5_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Delhi+Public+School+Nerul+Navi+Mumbai+justdial",
         websitePhotosCount: 85,
         websiteUrl: "https://dpsnerul.edu.in",
         isPrimaryCompetitor: true 
@@ -439,7 +439,7 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         googleMapsUrl: "https://www.google.com/maps/search/Podar+International+School+Nerul",
         directoryName: "Justdial",
         directoryRatingText: "4.2★ (610 reviews)",
-        directoryUrl: "https://www.justdial.com/Navi-Mumbai/Podar-International-School-Nerul/022PXX22-XX22-100223120615-K1R3_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Podar+International+School+Nerul+Navi+Mumbai+justdial",
         websitePhotosCount: 55,
         websiteUrl: "https://www.podareducation.org/school/nerul",
         isPrimaryCompetitor: true 
@@ -449,12 +449,12 @@ export const CAMPUS_COMPETITORS: Record<string, CampusCompetitorData> = {
         locality: "Kharghar / Panvel", 
         googleCategory: "ICSE school", 
         googlePhotosCount: 312, 
-        googleRatingText: "0 reviews (Suppressed on Maps)", 
+        googleRatingText: "0 reviews visible on Google", 
         googleMapsStatus: "suppressed", 
         googleMapsUrl: "https://www.google.com/maps/search/Ryan+International+School+Kharghar",
         directoryName: "Justdial",
         directoryRatingText: "4.1★ (480 reviews)",
-        directoryUrl: "https://www.justdial.com/Navi-Mumbai/Ryan-International-School-Kharghar/022PXX22-XX22-090919133857-E9S7_BZDET",
+        directoryUrl: "https://www.google.com/search?q=Ryan+International+School+Kharghar+Navi+Mumbai+justdial",
         websitePhotosCount: 40,
         websiteUrl: "https://ryangroup.org",
         isPrimaryCompetitor: true 
@@ -498,301 +498,13 @@ const STAGES: StageCardData[] = [
   }
 ];
 
-interface StageItem {
-  name: string;
-  score: number;
-  max: number;
-  status: 'pass' | 'fail' | 'warn';
-  detail: string;
-  isPhotoMetric?: boolean;
-}
-
-// 25-25-25-25 Model mapping for each school
-const STAGE_SCORES: Record<string, {
-  discovery: { score: number; items: StageItem[] };
-  freshness: { score: number; items: StageItem[] };
-  reputation: { score: number; items: StageItem[] };
-  conversion: { score: number; items: StageItem[] };
-}> = {
-  'hfs-thane': {
-    discovery: {
-      score: 19,
-      items: [
-        { name: 'Google Profile Verified with Campus Address', score: 8, max: 8, status: 'pass', detail: 'Verified Google profile active at Hiranandani Estate, Thane.' },
-        { name: 'Review Visibility Allowed by Category', score: 0, max: 5, status: 'fail', detail: 'Category is "General education school". Google hid all reviews on April 30, 2025.' },
-        { name: 'Official Website Linked on Maps', score: 6, max: 6, status: 'pass', detail: 'Direct working link to hfsthane.in on profile.' },
-        { name: 'Admissions Telephone on Profile', score: 3, max: 3, status: 'pass', detail: 'Direct telephone line linked and operational.' },
-        { 
-          name: 'Profile Photo Density (100+ Photos Target)', 
-          score: 2, 
-          max: 3, 
-          status: 'warn', 
-          detail: '39 photos on Google Maps Knowledge Panel (and 24 on website gallery). Direct Thane competitors feature 53 to 237 photos.',
-          isPhotoMetric: true 
-        }
-      ]
-    },
-    freshness: {
-      score: 17,
-      items: [
-        { name: 'Admissions 2027–28 Intake Notice', score: 0, max: 8, status: 'fail', detail: 'Displays stale notice: "Admissions window closed on 28 April 2026". Discourages new parents.' },
-        { name: 'Board Results Posted with Batch Year', score: 7, max: 7, status: 'pass', detail: 'Stellar 99.3% ISC topper and 65% scoring 90%+ celebrated on site.' },
-        { name: 'News & Event Recency (≤90 Days)', score: 6, max: 6, status: 'pass', detail: 'Fresh news item from August 2026 (57 days old).' },
-        { name: 'Principal Named with Pedagogical Vision', score: 4, max: 4, status: 'pass', detail: 'Ms. Neelu Lamba officially introduced with message and photograph.' }
-      ]
-    },
-    reputation: {
-      score: 12,
-      items: [
-        { name: 'Google Star Rating & Review Volume', score: 0, max: 13, status: 'fail', detail: 'Shows 0 reviews on Google Maps due to school category suppression bug.' },
-        { name: 'Active Campus Instagram & Facebook', score: 8, max: 8, status: 'pass', detail: 'Active official Facebook page and Instagram handles.' },
-        { name: 'Listed on Major K-12 Portals (7 Sites)', score: 4, max: 4, status: 'pass', detail: 'Present on all major school search directories (Edustoke, Justdial, UniApply).' }
-      ]
-    },
-    conversion: {
-      score: 13,
-      items: [
-        { name: 'Online Enquiry & Application Form', score: 8, max: 8, status: 'pass', detail: 'Active inquiry form capturing student grade and parent contact details.' },
-        { name: 'WhatsApp Click-to-Chat Channel', score: 0, max: 6, status: 'fail', detail: 'No floating WhatsApp button. Indian parents prefer instant chat.' },
-        { name: 'Transparent Tuition Fee Schedule', score: 0, max: 6, status: 'fail', detail: 'Only shows ₹500 registration fee. No tuition fee table published.' },
-        { name: 'Downloadable Prospectus & Clear CTA', score: 5, max: 5, status: 'pass', detail: 'Prospectus download available upon submitting inquiry.' }
-      ]
-    }
-  },
-  'hus-chennai': {
-    discovery: {
-      score: 20,
-      items: [
-        { name: 'Google Profile Verified with Campus Address', score: 8, max: 8, status: 'pass', detail: 'Verified profile at House of Hiranandani, Egattur, OMR, Chennai.' },
-        { name: 'Review Visibility Allowed by Category', score: 0, max: 5, status: 'fail', detail: 'Category is "International school". Reviews suppressed on Google Maps.' },
-        { name: 'Official Website Linked on Maps', score: 6, max: 6, status: 'pass', detail: 'Direct link to hus.edu.in active.' },
-        { name: 'Admissions Telephone on Profile', score: 3, max: 3, status: 'pass', detail: 'Admissions phone number active.' },
-        { 
-          name: 'Profile Photo Density (100+ Photos Target)', 
-          score: 3, 
-          max: 3, 
-          status: 'pass', 
-          detail: '68 photos on Google Maps Knowledge Panel (and 42 on website gallery). Strong coverage across IB labs, sports, and campus.',
-          isPhotoMetric: true 
-        }
-      ]
-    },
-    freshness: {
-      score: 25,
-      items: [
-        { name: 'Admissions 2027–28 Intake Notice', score: 8, max: 8, status: 'pass', detail: 'Active 4-step rolling admissions portal for 2026-27 & 2027-28.' },
-        { name: 'Board Results Posted with Batch Year', score: 7, max: 7, status: 'pass', detail: 'World-class IBDP (34+ avg) and Cambridge IGCSE toppers celebrated.' },
-        { name: 'News & Event Recency (≤90 Days)', score: 6, max: 6, status: 'pass', detail: 'Fresh term updates and academic calendar posted.' },
-        { name: 'Principal Named with Pedagogical Vision', score: 4, max: 4, status: 'pass', detail: 'Director Sivakumar Srinivasan & Primary Head Gayathri Loganathan named.' }
-      ]
-    },
-    reputation: {
-      score: 12,
-      items: [
-        { name: 'Google Star Rating & Review Volume', score: 0, max: 13, status: 'fail', detail: 'Reviews hidden on Google Maps (Justdial displays 193 reviews, 3.9★).' },
-        { name: 'Active Campus Instagram & Facebook', score: 8, max: 8, status: 'pass', detail: 'Active @husschoolchennai Instagram and Facebook pages.' },
-        { name: 'Listed on Major K-12 Portals (7 Sites)', score: 4, max: 4, status: 'pass', detail: 'Listed across major Chennai school directories.' }
-      ]
-    },
-    conversion: {
-      score: 14,
-      items: [
-        { name: 'Online Enquiry & Application Form', score: 8, max: 8, status: 'pass', detail: 'Direct online admission application portal active on hus.edu.in.' },
-        { name: 'WhatsApp Click-to-Chat Channel', score: 0, max: 6, status: 'fail', detail: 'No direct WhatsApp click-to-chat button.' },
-        { name: 'Transparent Tuition Fee Schedule', score: 0, max: 6, status: 'fail', detail: 'Fee schedule kept private; requires contacting admissions office.' },
-        { name: 'Downloadable Prospectus & Clear CTA', score: 6, max: 5, status: 'pass', detail: 'Prominent Apply Online CTA button and IB curriculum guides.' }
-      ]
-    }
-  },
-  'hfs-powai': {
-    discovery: {
-      score: 20,
-      items: [
-        { name: 'Google Profile Verified with Campus Address', score: 8, max: 8, status: 'pass', detail: 'Verified profile at Hiranandani Gardens, Powai.' },
-        { name: 'Review Visibility Allowed by Category', score: 0, max: 5, status: 'fail', detail: 'Reviews suppressed under "General education school".' },
-        { name: 'Official Website Linked on Maps', score: 6, max: 6, status: 'pass', detail: 'Direct link to hfspowai.co.in active.' },
-        { name: 'Admissions Telephone on Profile', score: 3, max: 3, status: 'pass', detail: 'Phone number listed on Google profile.' },
-        { 
-          name: 'Profile Photo Density (100+ Photos Target)', 
-          score: 2, 
-          max: 3, 
-          status: 'warn', 
-          detail: '49 photos on Google Maps Knowledge Panel. Podar Powai across the road maintains 263 photos (5.3x more photos).',
-          isPhotoMetric: true 
-        }
-      ]
-    },
-    freshness: {
-      score: 17,
-      items: [
-        { name: 'Admissions 2027–28 Intake Notice', score: 0, max: 8, status: 'fail', detail: 'Homepage displays outdated "2024–2026 IBDP" banner.' },
-        { name: 'Board Results Posted with Batch Year', score: 7, max: 7, status: 'pass', detail: '99.4% ICSE topper and 100% pass rate highlighted.' },
-        { name: 'News & Event Recency (≤90 Days)', score: 6, max: 6, status: 'pass', detail: 'News updated within last 90 days.' },
-        { name: 'Principal Named with Pedagogical Vision', score: 4, max: 4, status: 'pass', detail: 'Mrs. Kalyani Patnaik officially named as Principal & Head of School.' }
-      ]
-    },
-    reputation: {
-      score: 8,
-      items: [
-        { name: 'Google Star Rating & Review Volume', score: 0, max: 13, status: 'fail', detail: '0 reviews visible on Google (vs Podar Powai showing 589 reviews at 4.4★).' },
-        { name: 'Active Campus Instagram & Facebook', score: 4, max: 8, status: 'warn', detail: 'Facebook icon in footer links to dead "#" tag.' },
-        { name: 'Listed on Major K-12 Portals (7 Sites)', score: 4, max: 4, status: 'pass', detail: 'Present on major Mumbai listing portals.' }
-      ]
-    },
-    conversion: {
-      score: 9,
-      items: [
-        { name: 'Online Enquiry & Application Form', score: 8, max: 8, status: 'pass', detail: 'Working admissions inquiry form.' },
-        { name: 'WhatsApp Click-to-Chat Channel', score: 0, max: 6, status: 'fail', detail: 'No WhatsApp chat option.' },
-        { name: 'Transparent Tuition Fee Schedule', score: 0, max: 6, status: 'fail', detail: 'No tuition fees disclosed on website.' },
-        { name: 'Downloadable Prospectus & Clear CTA', score: 1, max: 5, status: 'warn', detail: 'No downloadable prospectus PDF; standard CTA.' }
-      ]
-    }
-  },
-  'thriveni-academy': {
-    discovery: {
-      score: 19,
-      items: [
-        { name: 'Google Profile Verified with Campus Address', score: 8, max: 8, status: 'pass', detail: 'Profile active at Hiranandani Parks, Oragadam, Chennai.' },
-        { name: 'Review Visibility Allowed by Category', score: 0, max: 5, status: 'fail', detail: 'Reviews hidden on standard CBSE school category.' },
-        { name: 'Official Website Linked on Maps', score: 6, max: 6, status: 'pass', detail: 'Direct link to thriveniacademy.com active.' },
-        { name: 'Admissions Telephone on Profile', score: 3, max: 3, status: 'pass', detail: 'Phone number displayed.' },
-        { 
-          name: 'Profile Photo Density (100+ Photos Target)', 
-          score: 2, 
-          max: 3, 
-          status: 'warn', 
-          detail: '23 photos on Google Maps profile. Direct Oragadam area competitors maintain 64 to 98 campus photos.',
-          isPhotoMetric: true 
-        }
-      ]
-    },
-    freshness: {
-      score: 15,
-      items: [
-        { name: 'Admissions 2027–28 Intake Notice', score: 0, max: 8, status: 'fail', detail: 'Admissions link opens a stale 2024–25 flyer graphic.' },
-        { name: 'Board Results Posted with Batch Year', score: 7, max: 7, status: 'pass', detail: '100% CBSE Class X pass rate with 85% first-class distinctions.' },
-        { name: 'News & Event Recency (≤90 Days)', score: 4, max: 6, status: 'warn', detail: 'Latest news item is 97 days old.' },
-        { name: 'Principal Named with Pedagogical Vision', score: 4, max: 4, status: 'pass', detail: 'Dr. M.P. Anand officially named with credentials.' }
-      ]
-    },
-    reputation: {
-      score: 12,
-      items: [
-        { name: 'Google Star Rating & Review Volume', score: 0, max: 13, status: 'fail', detail: '0 reviews visible on Google Maps.' },
-        { name: 'Active Campus Instagram & Facebook', score: 8, max: 8, status: 'pass', detail: 'Facebook and Instagram handles active.' },
-        { name: 'Listed on Major K-12 Portals (7 Sites)', score: 4, max: 4, status: 'pass', detail: 'Present on major educational search aggregators.' }
-      ]
-    },
-    conversion: {
-      score: 8,
-      items: [
-        { name: 'Online Enquiry & Application Form', score: 8, max: 8, status: 'pass', detail: 'Enquiry form operational.' },
-        { name: 'WhatsApp Click-to-Chat Channel', score: 0, max: 6, status: 'fail', detail: 'No WhatsApp click-to-chat button.' },
-        { name: 'Transparent Tuition Fee Schedule', score: 0, max: 6, status: 'fail', detail: 'Tuition fees not disclosed.' },
-        { name: 'Downloadable Prospectus & Clear CTA', score: 0, max: 5, status: 'fail', detail: 'Brochure download link leads to an empty page.' }
-      ]
-    }
-  },
-  'hfs-international': {
-    discovery: {
-      score: 9,
-      items: [
-        { name: 'Google Profile Verified with Campus Address', score: 8, max: 8, status: 'pass', detail: 'Profile exists on Google Maps.' },
-        { name: 'Review Visibility Allowed by Category', score: 0, max: 5, status: 'fail', detail: 'CRITICAL: Misfiled on Google Maps as a "Building", not a school.' },
-        { name: 'Official Website Linked on Maps', score: 0, max: 6, status: 'fail', detail: 'No website link attached to Google profile.' },
-        { name: 'Admissions Telephone on Profile', score: 0, max: 3, status: 'fail', detail: 'No telephone number listed on Google profile.' },
-        { 
-          name: 'Profile Photo Density (100+ Photos Target)', 
-          score: 1, 
-          max: 3, 
-          status: 'fail', 
-          detail: 'Only 1 photo uploaded on Google Maps. Competitor Oberoi International features 195 photos; Podar features 263.',
-          isPhotoMetric: true 
-        }
-      ]
-    },
-    freshness: {
-      score: 21,
-      items: [
-        { name: 'Admissions 2027–28 Intake Notice', score: 4, max: 8, status: 'warn', detail: 'Mentions 2027-28, but only inside a flat graphic flyer (unsearchable).' },
-        { name: 'Board Results Posted with Batch Year', score: 7, max: 7, status: 'pass', detail: 'IBDP (37.2 avg) and Cambridge A-Level toppers celebrated.' },
-        { name: 'News & Event Recency (≤90 Days)', score: 6, max: 6, status: 'pass', detail: 'Fresh event updates posted.' },
-        { name: 'Principal Named with Pedagogical Vision', score: 4, max: 4, status: 'pass', detail: 'Mrs. Kalyani Patnaik officially named as Director.' }
-      ]
-    },
-    reputation: {
-      score: 8,
-      items: [
-        { name: 'Google Star Rating & Review Volume', score: 0, max: 13, status: 'fail', detail: '0 reviews visible due to "Building" category.' },
-        { name: 'Active Campus Instagram & Facebook', score: 4, max: 8, status: 'warn', detail: 'Facebook icon links to dead "#" tag.' },
-        { name: 'Listed on Major K-12 Portals (7 Sites)', score: 4, max: 4, status: 'pass', detail: 'Listed on major IB school portals.' }
-      ]
-    },
-    conversion: {
-      score: 9,
-      items: [
-        { name: 'Online Enquiry & Application Form', score: 8, max: 8, status: 'pass', detail: 'Online enquiry form working.' },
-        { name: 'WhatsApp Click-to-Chat Channel', score: 0, max: 6, status: 'fail', detail: 'No WhatsApp option for international parents.' },
-        { name: 'Transparent Tuition Fee Schedule', score: 0, max: 6, status: 'fail', detail: 'Tuition fees withheld.' },
-        { name: 'Downloadable Prospectus & Clear CTA', score: 1, max: 5, status: 'warn', detail: 'No direct prospectus download button.' }
-      ]
-    }
-  },
-  'hts-panvel': {
-    discovery: {
-      score: 17,
-      items: [
-        { name: 'Google Profile Verified with Campus Address', score: 8, max: 8, status: 'pass', detail: 'Profile active at Hiranandani Fortune City, Panvel.' },
-        { name: 'Review Visibility Allowed by Category', score: 0, max: 5, status: 'fail', detail: 'Reviews hidden under standard school category.' },
-        { name: 'Official Website Linked on Maps', score: 6, max: 6, status: 'pass', detail: 'Direct link to htspanvel.com active.' },
-        { name: 'Admissions Telephone on Profile', score: 2, max: 3, status: 'warn', detail: 'Telephone line listed.' },
-        { 
-          name: 'Profile Photo Density (100+ Photos Target)', 
-          score: 1, 
-          max: 3, 
-          status: 'fail', 
-          detail: 'Only 11 photos on Google Maps Knowledge Panel. Navi Mumbai competitors feature 312 to 534 campus photos.',
-          isPhotoMetric: true 
-        }
-      ]
-    },
-    freshness: {
-      score: 8,
-      items: [
-        { name: 'Admissions 2027–28 Intake Notice', score: 0, max: 8, status: 'fail', detail: 'States only 2026-27; zero mention of 2027-28.' },
-        { name: 'Board Results Posted with Batch Year', score: 4, max: 7, status: 'warn', detail: '100% maiden ICSE pass locked inside an unsearchable JPEG flyer.' },
-        { name: 'News & Event Recency (≤90 Days)', score: 0, max: 6, status: 'fail', detail: 'No dated news items on website.' },
-        { name: 'Principal Named with Pedagogical Vision', score: 4, max: 4, status: 'pass', detail: 'Ms. Rupa Choudhury officially named as Principal.' }
-      ]
-    },
-    reputation: {
-      score: 6,
-      items: [
-        { name: 'Google Star Rating & Review Volume', score: 0, max: 13, status: 'fail', detail: '0 reviews visible on Google.' },
-        { name: 'Active Campus Instagram & Facebook', score: 4, max: 8, status: 'warn', detail: 'Facebook active, but no campus Instagram handle.' },
-        { name: 'Listed on Major K-12 Portals (7 Sites)', score: 2, max: 4, status: 'warn', detail: 'Found on only 2 portal directories.' }
-      ]
-    },
-    conversion: {
-      score: 7,
-      items: [
-        { name: 'Online Enquiry & Application Form', score: 5, max: 8, status: 'warn', detail: 'Enquiry form exists on inner page, but no Apply Now button on homepage.' },
-        { name: 'WhatsApp Click-to-Chat Channel', score: 0, max: 6, status: 'fail', detail: 'No WhatsApp click-to-chat button.' },
-        { name: 'Transparent Tuition Fee Schedule', score: 0, max: 6, status: 'fail', detail: 'Mentions "Feesback" reward scheme without publishing base fees.' },
-        { name: 'Downloadable Prospectus & Clear CTA', score: 2, max: 5, status: 'warn', detail: 'No prospectus download link.' }
-      ]
-    }
-  }
-};
-
 export const ApplePresentation: React.FC<{ onJumpToFixes: () => void }> = ({ onJumpToFixes }) => {
   const [activeSchoolId, setActiveSchoolId] = useState<string>('hfs-thane');
   const [activeStageId, setActiveStageId] = useState<'discovery' | 'freshness' | 'reputation' | 'conversion'>('discovery');
   const [showPhotoOverlay, setShowPhotoOverlay] = useState<boolean>(false);
 
   const school = SCHOOLS_DATA.find((s) => s.id === activeSchoolId) || SCHOOLS_DATA[0];
-  const schoolStageData = STAGE_SCORES[school.id] || STAGE_SCORES['hfs-thane'];
+  const schoolStageData = school.stages25;
   const competitorData = CAMPUS_COMPETITORS[school.id] || CAMPUS_COMPETITORS['hfs-thane'];
 
   // Current 25-25-25-25 scores for active school
@@ -801,6 +513,12 @@ export const ApplePresentation: React.FC<{ onJumpToFixes: () => void }> = ({ onJ
   const s3 = schoolStageData.reputation.score;
   const s4 = schoolStageData.conversion.score;
   const grandTotal = s1 + s2 + s3 + s4;
+
+  // The three quick wins, sized by this campus's actual shortfall
+  const quickWins = SCORE_FIXES.filter(
+    (f) => ['google-category', 'admissions-2027-banner', 'whatsapp-chat'].includes(f.id) && fixGain(school, f) > 0
+  );
+  const quickWinGain = quickWins.reduce((sum, f) => sum + fixGain(school, f), 0);
 
   const currentStageMeta = STAGES.find((st) => st.id === activeStageId)!;
   const currentStageDetail = schoolStageData[activeStageId];
@@ -855,10 +573,10 @@ export const ApplePresentation: React.FC<{ onJumpToFixes: () => void }> = ({ onJ
 
             <div className="text-center">
               <span className="text-[11px] font-mono uppercase text-slate-400 font-bold block mb-1">
-                Day 90 Target
+                Day 90 Network Target
               </span>
               <div className="text-5xl sm:text-6xl font-extrabold font-mono tracking-tighter text-emerald-400">
-                85+
+                {AUDIT_METADATA.targetScoreDay90}
                 <span className="text-lg text-slate-500 font-normal"> /100</span>
               </div>
               <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800">
@@ -878,8 +596,7 @@ export const ApplePresentation: React.FC<{ onJumpToFixes: () => void }> = ({ onJ
       {/* ========================================================================= */}
       <div className="bg-white/90 backdrop-blur-xl border border-slate-200/80 rounded-2xl p-2 shadow-sm flex items-center gap-1.5 overflow-x-auto">
         {SCHOOLS_DATA.map((s) => {
-          const sData = STAGE_SCORES[s.id] || STAGE_SCORES['hfs-thane'];
-          const total = sData.discovery.score + sData.freshness.score + sData.reputation.score + sData.conversion.score;
+          const total = s.score;
           const isSelected = activeSchoolId === s.id;
 
           return (
@@ -1302,7 +1019,7 @@ export const ApplePresentation: React.FC<{ onJumpToFixes: () => void }> = ({ onJ
           </div>
           <p className="text-slate-200 text-xs sm:text-sm leading-relaxed">
             {activeStageId === 'discovery' && (
-              `Stage 1 (Discovery — 25 Points): Campus search visibility and micro-market presence. While verified physical addresses and websites exist, Google category suppression and low Google Maps photo density (${school.googlePhotosCount} photos vs. peer benchmark of 100+) create an immediate top-of-funnel discovery leak before parents ever click through to the school website.`
+              `Stage 1 (Discovery — 25 Points): Campus search visibility and micro-market presence. While verified physical addresses and websites exist, hidden Google reviews and low Google Maps photo density (${school.googlePhotosCount} photos vs. peer benchmark of 100+) create an immediate top-of-funnel discovery leak before parents ever click through to the school website.`
             )}
             {activeStageId === 'freshness' && (
               `Stage 2 (Proof of Life — 25 Points): Live admissions signalling and active intake proof. Despite exemplary ICSE/IB board toppers and established school leadership, displaying stale banners with closed dates from prior cycles directly dampens prospective parent interest for the 2027–28 academic intake.`
@@ -1311,14 +1028,14 @@ export const ApplePresentation: React.FC<{ onJumpToFixes: () => void }> = ({ onJ
               `Stage 3 (Reputation — 25 Points): Public parent validation and social proof. Zero visible reviews on Google Maps conceals the network's hard-won community goodwill, creating an unearned advantage for competitors like Podar (589 reviews, 4.4★) and Billabong (692 reviews, 4.2★) who utilize open Google categories.`
             )}
             {activeStageId === 'conversion' && (
-              `Stage 4 (Conversion — 25 Points): Frictionless parent engagement and application flow. The absence of a floating WhatsApp click-to-chat channel and clear indicative fee guidelines leads prospective parents to bounce to unverified aggregator portals that publish contradictory figures.`
+              `Stage 4 (Conversion — 25 Points): Frictionless parent engagement and application flow. ${schoolStageData.conversion.items.find((i) => i.name.startsWith('WhatsApp'))?.score ? 'Even with WhatsApp in place, the' : 'The absence of a floating WhatsApp click-to-chat channel and'} missing indicative fee guidelines lead prospective parents to bounce to unverified aggregator portals that publish contradictory figures.`
             )}
           </p>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 5. THE ARITHMETIC LEAP BANNER (53.3 -> 85.3+ IN 90 DAYS)                  */}
+      {/* 5. THE ARITHMETIC LEAP BANNER (computed from this campus's actual gaps)     */}
       {/* ========================================================================= */}
       <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800">
         <div className="space-y-2">
@@ -1326,10 +1043,12 @@ export const ApplePresentation: React.FC<{ onJumpToFixes: () => void }> = ({ onJ
             Zero Civil Work · Rapid 90-Day Leap
           </span>
           <h3 className="text-xl font-bold">
-            How {school.shortName} Jumps from {grandTotal} to {grandTotal + 26}+ in 90 Days
+            How {school.shortName} Jumps from {grandTotal} to {grandTotal + quickWinGain} in 90 Days
           </h3>
           <p className="text-xs text-slate-300 max-w-lg leading-relaxed">
-            Switching the Google Business Profile category unhides reviews (+13 pts). Updating the homepage banner to "Admissions Open 2027–28" (+8 pts). Adding a WhatsApp chat widget (+6 pts). No construction required.
+            {quickWins.length
+              ? `${quickWins.map((f) => `${f.title} (+${fixGain(school, f)} pts)`).join('. ')}. No construction required.`
+              : 'This campus has already closed the three quick-win gaps; see the simulator for the remaining fixes.'}
           </p>
         </div>
 

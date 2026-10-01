@@ -1,5 +1,5 @@
 import React from 'react';
-import { ROADMAP_STAGES } from '../data/auditData';
+import { ROADMAP_STAGES, AUDIT_METADATA, bandFor } from '../data/auditData';
 import { Calendar, CheckCircle2, ArrowRight, TrendingUp, Sparkles } from 'lucide-react';
 
 export const RoadmapView: React.FC = () => {
@@ -29,7 +29,7 @@ export const RoadmapView: React.FC = () => {
             Network Trajectory
           </span>
           <div className="text-base font-bold text-slate-900">
-            Current Index: <span className="font-mono text-rose-600">54.2 / 100</span> (At-Risk Baseline) → Target Day 90: <span className="font-mono text-emerald-600">85.3+ / 100</span> (Ready Band)
+            Current Index: <span className="font-mono text-rose-600">{AUDIT_METADATA.networkScore} / 100</span> ({bandFor(AUDIT_METADATA.networkScore)}) → Target Day 90: <span className="font-mono text-emerald-600">{AUDIT_METADATA.targetScoreDay90} / 100</span> ({bandFor(AUDIT_METADATA.targetScoreDay90)})
           </div>
         </div>
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">

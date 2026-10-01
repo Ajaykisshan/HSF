@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SCHOOLS_DATA, AUDIT_METADATA } from '../data/auditData';
+import { SCHOOLS_DATA, AUDIT_METADATA, SchoolAudit } from '../data/auditData';
 import { Check, X, Info, Download, Layers, Compass, Sparkles, ShieldCheck, Zap } from 'lucide-react';
 
 interface StageRowDef {
@@ -11,31 +11,45 @@ interface StageRowDef {
   scores: Record<string, number>;
 }
 
-const STAGES_25_ROWS: StageRowDef[] = [
-  // Stage 1: Discovery (25 Pts)
-  { stage: "Stage 1", name: "Google Profile Verified with Campus Locality", max: 8, weight: "8 pts", description: "Verified Google Business Profile active with campus locality.", scores: { 'hfs-thane': 8, 'hus-chennai': 8, 'hfs-powai': 8, 'thriveni-academy': 8, 'hfs-international': 8, 'hts-panvel': 8 } },
-  { stage: "Stage 1", name: "Review Visibility Allowed by Category", max: 5, weight: "5 pts", description: "Primary Google category allows public ratings and reviews to show.", scores: { 'hfs-thane': 0, 'hus-chennai': 0, 'hfs-powai': 0, 'thriveni-academy': 0, 'hfs-international': 0, 'hts-panvel': 0 } },
-  { stage: "Stage 1", name: "Official Website Linked on Profile", max: 6, weight: "6 pts", description: "Direct working link to official school website on profile.", scores: { 'hfs-thane': 6, 'hus-chennai': 6, 'hfs-powai': 6, 'thriveni-academy': 6, 'hfs-international': 0, 'hts-panvel': 6 } },
-  { stage: "Stage 1", name: "Admissions Telephone on Profile", max: 3, weight: "3 pts", description: "Direct working telephone line listed on Google profile.", scores: { 'hfs-thane': 3, 'hus-chennai': 3, 'hfs-powai': 3, 'thriveni-academy': 3, 'hfs-international': 0, 'hts-panvel': 2 } },
-  { stage: "Stage 1", name: "Photo Density (100+ Campus Photos Target)", max: 3, weight: "3 pts", description: "Knowledge panel photo count: 100+ = 3 pts, 50-99 = 2.5 pts, 20-49 = 2 pts, 1-19 = 1 pt.", scores: { 'hfs-thane': 2, 'hus-chennai': 3, 'hfs-powai': 3, 'thriveni-academy': 2, 'hfs-international': 1, 'hts-panvel': 1 } },
+const STAGE_LABELS: Record<keyof SchoolAudit['stages25'], string> = {
+  discovery: 'Stage 1',
+  freshness: 'Stage 2',
+  reputation: 'Stage 3',
+  conversion: 'Stage 4',
+};
 
-  // Stage 2: Proof of Life / Freshness (25 Pts)
-  { stage: "Stage 2", name: "Admissions 2027–28 Intake Notice", max: 8, weight: "8 pts", description: "Prominent live 2027-28 admissions cycle notice on homepage.", scores: { 'hfs-thane': 0, 'hus-chennai': 8, 'hfs-powai': 0, 'thriveni-academy': 0, 'hfs-international': 4, 'hts-panvel': 0 } },
-  { stage: "Stage 2", name: "Board Results Posted with Batch Year", max: 7, weight: "7 pts", description: "Official board exam marks or topper lists with year stated.", scores: { 'hfs-thane': 7, 'hus-chennai': 7, 'hfs-powai': 7, 'thriveni-academy': 7, 'hfs-international': 7, 'hts-panvel': 4 } },
-  { stage: "Stage 2", name: "News & Event Recency (≤90 Days)", max: 6, weight: "6 pts", description: "Recency: ≤90 days = 6 pts, ≤180 days = 4 pts, older = 0 pts.", scores: { 'hfs-thane': 6, 'hus-chennai': 6, 'hfs-powai': 6, 'thriveni-academy': 4, 'hfs-international': 6, 'hts-panvel': 0 } },
-  { stage: "Stage 2", name: "Principal Named with Pedagogical Vision", max: 4, weight: "4 pts", description: "Principal/Head of School officially introduced on website.", scores: { 'hfs-thane': 4, 'hus-chennai': 4, 'hfs-powai': 4, 'thriveni-academy': 4, 'hfs-international': 4, 'hts-panvel': 4 } },
+const ITEM_DESCRIPTIONS: Record<string, string> = {
+  'Google Profile Verified with Campus Address': 'Verified Google Business Profile active with campus locality.',
+  'Review Visibility Allowed by Category': 'Primary Google category allows public ratings and reviews to show.',
+  'Official Website Linked on Maps': 'Direct working link to official school website on profile.',
+  'Admissions Telephone on Profile': 'Direct working telephone line listed on Google profile.',
+  'Photo Density (100+ Campus Photos)': 'Knowledge panel photo count: 100+ = 3 pts, 50–99 = 2 pts, 20–49 = 1 pt, under 20 = 0.',
+  'Admissions 2027–28 Intake Notice': 'Prominent live 2027-28 admissions cycle notice on homepage.',
+  'Board Results Posted with Batch Year': 'Board results or topper lists with year stated, as crawlable page content (PDF/image only = partial).',
+  'News & Event Recency (≤90 Days)': 'Recency: ≤90 days = 6 pts, ≤180 days = 4 pts, older = 0 pts.',
+  'Principal Named with Pedagogical Vision': 'Principal/Head of School officially introduced on website.',
+  'Google Star Rating & Review Volume': 'Public average rating and review count on Google (0 when no reviews are visible).',
+  'Active Campus Instagram & Facebook': 'Website links to working, campus-specific Facebook & Instagram accounts (dead "#" or template placeholder links do not count).',
+  'Listed on Major K-12 Portals (7 Sites)': 'Found on major education listing portals (Justdial, UniApply, Edustoke).',
+  'Online Enquiry & Application Form': 'Functional web enquiry or admission lead capture form.',
+  'WhatsApp Click-to-Chat Channel': 'One-click WhatsApp inquiry channel for instant parent messaging.',
+  'Transparent Tuition Fee Schedule': 'Public tuition fee figures and schedule (a fee page without numbers does not count).',
+  'Downloadable Prospectus & Clear CTA': 'Prominent application CTA button and downloadable prospectus.',
+};
 
-  // Stage 3: Reputation & Proof (25 Pts)
-  { stage: "Stage 3", name: "Google Star Rating & Review Volume", max: 13, weight: "13 pts", description: "Public average rating on Google (0 if reviews suppressed by category).", scores: { 'hfs-thane': 0, 'hus-chennai': 0, 'hfs-powai': 0, 'thriveni-academy': 0, 'hfs-international': 0, 'hts-panvel': 0 } },
-  { stage: "Stage 3", name: "Active Campus Instagram & Facebook", max: 8, weight: "8 pts", description: "Active official campus-specific Facebook & Instagram channels.", scores: { 'hfs-thane': 8, 'hus-chennai': 8, 'hfs-powai': 4, 'thriveni-academy': 8, 'hfs-international': 4, 'hts-panvel': 4 } },
-  { stage: "Stage 3", name: "Presence on Major K-12 Portals (7 Sites)", max: 4, weight: "4 pts", description: "Found on major education listing portals (Justdial, UniApply, Edustoke).", scores: { 'hfs-thane': 4, 'hus-chennai': 4, 'hfs-powai': 4, 'thriveni-academy': 4, 'hfs-international': 4, 'hts-panvel': 2 } },
-
-  // Stage 4: Conversion & Action (25 Pts)
-  { stage: "Stage 4", name: "Online Enquiry & Application Form", max: 8, weight: "8 pts", description: "Functional web enquiry or admission lead capture form.", scores: { 'hfs-thane': 8, 'hus-chennai': 8, 'hfs-powai': 8, 'thriveni-academy': 8, 'hfs-international': 8, 'hts-panvel': 5 } },
-  { stage: "Stage 4", name: "WhatsApp Click-to-Chat Channel", max: 6, weight: "6 pts", description: "One-click WhatsApp inquiry channel for instant parent messaging.", scores: { 'hfs-thane': 0, 'hus-chennai': 0, 'hfs-powai': 0, 'thriveni-academy': 0, 'hfs-international': 0, 'hts-panvel': 0 } },
-  { stage: "Stage 4", name: "Transparent Tuition Fee Schedule", max: 6, weight: "6 pts", description: "Transparent public tuition fees and fee schedule page.", scores: { 'hfs-thane': 0, 'hus-chennai': 0, 'hfs-powai': 0, 'thriveni-academy': 0, 'hfs-international': 0, 'hts-panvel': 0 } },
-  { stage: "Stage 4", name: "Downloadable Prospectus & Clear CTA", max: 5, weight: "5 pts", description: "Prominent application CTA button and downloadable syllabus brochure.", scores: { 'hfs-thane': 5, 'hus-chennai': 6, 'hfs-powai': 1, 'thriveni-academy': 0, 'hfs-international': 1, 'hts-panvel': 2 } },
-];
+// Rows and scores come straight from the audit data, so the matrix can never drift from the school scores.
+const STAGES_25_ROWS: StageRowDef[] = (Object.keys(STAGE_LABELS) as (keyof SchoolAudit['stages25'])[]).flatMap((k) =>
+  SCHOOLS_DATA[0].stages25[k].items.map((item) => ({
+    stage: STAGE_LABELS[k],
+    name: item.name,
+    max: item.max,
+    weight: `${item.max} pts`,
+    description: ITEM_DESCRIPTIONS[item.name] ?? '',
+    scores: Object.fromEntries(
+      SCHOOLS_DATA.map((sc) => [sc.id, sc.stages25[k].items.find((i) => i.name === item.name)?.score ?? 0])
+    ),
+  }))
+);
 
 export const ScorecardMatrix: React.FC = () => {
   const [activeStageFilter, setActiveStageFilter] = useState<string>('all');
@@ -75,7 +89,7 @@ export const ScorecardMatrix: React.FC = () => {
 
           <div className="bg-slate-900 text-white rounded-2xl px-5 py-3 text-xs font-medium border border-slate-800 shrink-0">
             <span className="text-slate-400 block text-[10px] uppercase font-sans">Network Mean</span>
-            <span className="font-extrabold text-amber-400 font-mono text-xl">54.2 / 100</span> (6 Campuses Audited)
+            <span className="font-extrabold text-amber-400 font-mono text-xl">{AUDIT_METADATA.networkScore} / 100</span> ({AUDIT_METADATA.schoolsAudited} Campuses Audited)
           </div>
         </div>
       </div>
@@ -185,10 +199,10 @@ export const ScorecardMatrix: React.FC = () => {
           <span>Scoring Rules & Mathematical Ground Truth:</span>
         </div>
         <p className="leading-relaxed">
-          <strong>Framework Parity:</strong> Every school is scored out of 100 points ($25 + 25 + 25 + 25 = 100$). The row totals mathematically equal each campus score: HUS Chennai (71), HFS Thane (61), HFS Powai (54), Thriveni Academy (54), HFS International (47), and HTS Panvel (38).
+          <strong>Framework Parity:</strong> Every school is scored out of 100 points ($25 + 25 + 25 + 25 = 100$). The row totals mathematically equal each campus score: {[...SCHOOLS_DATA].sort((x, y) => y.score - x.score).map((sc) => `${sc.shortName} (${sc.score})`).join(', ')}.
         </p>
         <p className="leading-relaxed">
-          <strong>Reputation Zero-Score Rule:</strong> Indicator "Google Star Rating & Review Volume" scores 0 for every campus because Google displays 0 reviews under standard institutional categories. Reclassifying to "Educational institution" immediately recovers up to 13 points per campus.
+          <strong>Reputation Zero-Score Rule:</strong> Indicator "Google Star Rating & Review Volume" scores 0 for every campus because Google currently shows 0 reviews on all six profiles. Reclassifying to "Educational institution" restores review visibility (5 pts); a parent review drive can then recover up to 13 more points per campus.
         </p>
       </div>
     </div>

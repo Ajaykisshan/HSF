@@ -66,7 +66,7 @@ const STAGES_25_CONFIG: StageDefinition[] = [
         max: 5,
         score: school.stages25.discovery.items[1]?.score ?? 0,
         status: school.stages25.discovery.items[1]?.status ?? 'fail',
-        rationale: school.stages25.discovery.items[1]?.detail ?? `Primary category "${school.googleCategory}" has public ratings suppressed by Google since April 30, 2025.`
+        rationale: school.stages25.discovery.items[1]?.detail ?? `Primary category "${school.googleCategory}": no public reviews visible on Google.`
       },
       {
         id: 's1-3',
@@ -145,7 +145,7 @@ const STAGES_25_CONFIG: StageDefinition[] = [
     shortName: 'Reputation',
     weight: 25,
     tagline: 'Do parents and the local community publicly validate our school?',
-    executiveRationale: 'Stage 3 benchmarks public social proof and digital reputation. In Indian K-12 education, parent peer validation is decisive. Suppressed Google reviews hand an immediate perception advantage to nearby competitors.',
+    executiveRationale: 'Stage 3 benchmarks public social proof and digital reputation. In Indian K-12 education, parent peer validation is decisive. Hidden Google reviews hand an immediate perception advantage to nearby competitors.',
     subItems: (school) => [
       {
         id: 's3-1',
@@ -398,7 +398,7 @@ export const ScoreLogicView: React.FC = () => {
           <div className="flex items-center gap-2">
             <Info className="w-4 h-4 text-amber-700 shrink-0" />
             <span>
-              <strong>Legacy Agency Model Comparison:</strong> In the older 20-30-20-15-15 model, Reputation was allocated 30% instead of 25%. Because Google suppressed reviews to 0, schools like HFS Thane lost 30 full points, yielding 59/100 instead of 61/100.
+              <strong>Legacy Agency Model Comparison:</strong> In the older 20-30-20-15-15 model, Reputation was allocated 30% instead of 25%. Because no Google reviews are visible, every campus loses all 30 of those points (e.g. {SCHOOLS_DATA[0].shortName}: {SCHOOLS_DATA[0].legacyScore}/100 legacy vs {SCHOOLS_DATA[0].score}/100 in the 25·25·25·25 model).
             </span>
           </div>
           <button

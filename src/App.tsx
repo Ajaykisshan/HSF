@@ -77,7 +77,7 @@ export default function App() {
             <span className="text-amber-400 font-mono">25·25·25·25 Pathway</span>
           </div>
           <div className="text-slate-400 text-[11px]">
-            Master Audit File: Hiranandani_Digital_Footprint_Scorecard.xlsx · Strictly verifiable public data
+            Master Audit File: Hiranandani_Digital_Footprint_Scorecard.xlsx · Public data, school websites re-checked 1 Oct 2026
           </div>
         </div>
       </footer>

@@ -211,7 +211,9 @@ export const SchoolCardsTour: React.FC<SchoolCardsTourProps> = ({ onOpenDetails 
                 {school.admissionsStatus.criticalIssue || "No tuition fees published and zero reviews visible on Google."}
               </p>
               <div className="text-[11px] text-rose-800 font-medium pl-8">
-                ✗ 0 visible reviews (Google Category policy) & zero WhatsApp inquiry.
+                ✗ 0 visible reviews on Google
+                {school.stages25.conversion.items.find((i) => i.name.startsWith('WhatsApp'))?.score ? '' : ' & no WhatsApp enquiry channel'}
+                {school.stages25.reputation.items.find((i) => i.name.startsWith('Active Campus'))?.status !== 'pass' ? ' & broken / missing social links' : ''}.
               </div>
             </div>
           </div>

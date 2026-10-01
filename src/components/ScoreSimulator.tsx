@@ -19,87 +19,7 @@ import {
   Star,
   Award
 } from 'lucide-react';
-import { SCHOOLS_DATA, SchoolAudit } from '../data/auditData';
-
-interface FixAction {
-  id: string;
-  title: string;
-  stageName: string;
-  pointsAdded: number;
-  description: string;
-  effort: string;
-  readySnippet?: string;
-  applicableCampuses?: string[]; // If undefined, applies to all
-}
-
-const UNIVERSAL_25_FIXES: FixAction[] = [
-  {
-    id: 'google-category',
-    title: 'Switch Google Business Category to "Educational institution"',
-    stageName: 'Stage 3: Reputation & Proof',
-    pointsAdded: 13.0,
-    description: 'Bypasses Google\'s April 2025 review suppression bug on school categories. Instantly restores latent parent reviews and star ratings on Google Maps, matching Podar (4.4★) and Billabong (4.2★).',
-    effort: '5 mins (Google Business Profile setting)',
-    readySnippet: 'Action in Google Business Profile Manager: Edit Profile -> Business Category -> Change primary category from "ICSE School" / "General Education School" to "Educational institution" or "Education center".'
-  },
-  {
-    id: 'admissions-2027-banner',
-    title: 'Publish Hero "Admissions Open 2027–28" Banner',
-    stageName: 'Stage 2: Proof of Life (Freshness)',
-    pointsAdded: 8.0,
-    description: 'Purges HFS Thane\'s stale "closed 28 April 2026" notice and HFS Powai\'s "IBDP 2024-26" banner. Signals an actively enrolling campus for the upcoming academic cycle.',
-    effort: '30 mins per site (CMS update)',
-    readySnippet: 'Banner Copy: "Admissions Open for Academic Year 2027–28 across Pre-Primary, Primary & Secondary. Register for upcoming Open House & Campus Tours."'
-  },
-  {
-    id: 'whatsapp-chat',
-    title: 'Embed Floating WhatsApp Click-to-Chat Button',
-    stageName: 'Stage 4: Conversion & Action',
-    pointsAdded: 6.0,
-    description: 'Zero Hiranandani schools currently offer WhatsApp. Adding a floating button connects modern Indian parents directly to admissions officers without phone friction.',
-    effort: '1 hour web developer',
-    readySnippet: '<a href="https://wa.me/918657954016?text=Hello%2C%20I%20would%20like%20to%20enquire%20about%20Admissions%202027-28" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">Chat with Admissions</a>'
-  },
-  {
-    id: 'tuition-fee-page',
-    title: 'Publish Transparent Tuition Fee Schedule',
-    stageName: 'Stage 4: Conversion & Action',
-    pointsAdded: 6.0,
-    description: 'Publishes indicative tuition bands and payment schedules. Stops prospective parents bouncing to third-party aggregators that show conflicting or outdated numbers.',
-    effort: '1 day (Admissions office sign-off)',
-    readySnippet: 'Publish a dedicated /fees page outlining standard tuition fee bands, installment options, transport policies, and registration guidelines.'
-  },
-  {
-    id: 'campus-photos-density',
-    title: 'Upload 60+ High-Res Facility Photos to Google Maps',
-    stageName: 'Stage 1: Discovery',
-    pointsAdded: 1.0,
-    description: 'Elevates photo count from 39 to 100+, reaching full compliance on Google Maps Knowledge Panel alongside peers like Podar (84–263) and Billabong (88).',
-    effort: '1 afternoon (Zero civil cost)',
-    readySnippet: 'Upload 60 high-resolution photos of laboratories, sports grounds, smart classrooms, libraries, and campus architecture to Google Business Profile.'
-  },
-  {
-    id: 'hfs-intl-reclassify',
-    title: 'Fix HFS International Listing (Currently Categorized as "Building")',
-    stageName: 'Stage 1: Discovery',
-    pointsAdded: 16.0,
-    description: 'CRITICAL: HFS International was filed on Google Maps as an inanimate "Building" with only 1 photo and no phone/website. Claiming and fixing it restores direct search presence.',
-    effort: '15 mins (Google Maps claim & edit)',
-    applicableCampuses: ['hfs-international'],
-    readySnippet: 'Claim Google Maps profile. Change category to "International school". Link official URL (hfsinternationalpowai.com) and phone (+91 22 4966 6900).'
-  }
-];
-
-// Baseline scores in the 25-25-25-25 Model
-const BASELINE_25_SCORES: Record<string, number> = {
-  'hfs-thane': 61.0,
-  'hus-chennai': 71.0,
-  'hfs-powai': 54.0,
-  'thriveni-academy': 54.0,
-  'hfs-international': 47.0,
-  'hts-panvel': 38.0,
-  'all': 54.2
-};
+import { SCHOOLS_DATA, SCORE_FIXES, ScoreFix, AUDIT_METADATA, bandFor, fixGain } from '../data/auditData';
 
 export const ScoreSimulator: React.FC = () => {
   const [selectedSchoolId, setSelectedSchoolId] = useState<string>('hfs-thane');
@@ -110,21 +30,29 @@ export const ScoreSimulator: React.FC = () => {
   ]);
   const [copiedSnippetId, setCopiedSnippetId] = useState<string | null>(null);
 
-  const baseScore = BASELINE_25_SCORES[selectedSchoolId] ?? 61.0;
+  const selectedSchool = SCHOOLS_DATA.find((s) => s.id === selectedSchoolId);
 
-  // Filter fixes applicable to selected school
-  const applicableFixes = UNIVERSAL_25_FIXES.filter((fix) => {
-    if (!fix.applicableCampuses) return true;
-    return fix.applicableCampuses.includes(selectedSchoolId);
-  });
+  // Points a fix adds = the selected school's actual shortfall on the items it fixes
+  // (network view: the mean shortfall across all schools).
+  const gainFor = (fix: ScoreFix) =>
+    selectedSchool
+      ? fixGain(selectedSchool, fix)
+      : Number((SCHOOLS_DATA.reduce((sum, s) => sum + fixGain(s, fix), 0) / SCHOOLS_DATA.length).toFixed(1));
 
-  const addedPoints = activeFixIds.reduce((sum, id) => {
-    const fix = applicableFixes.find((f) => f.id === id);
-    return sum + (fix ? fix.pointsAdded : 0);
-  }, 0);
+  const baseScore = selectedSchool ? selectedSchool.score : AUDIT_METADATA.networkScore;
+
+  // Only show fixes that would actually move this school's score
+  const applicableFixes = SCORE_FIXES.filter((fix) => gainFor(fix) > 0);
+
+  const addedPoints = applicableFixes
+    .filter((fix) => activeFixIds.includes(fix.id))
+    .reduce((sum, fix) => sum + gainFor(fix), 0);
 
   const simulatedScore = Math.min(100, Number((baseScore + addedPoints).toFixed(1)));
   const scoreDelta = Number((simulatedScore - baseScore).toFixed(1));
+
+  const headlineFixes = applicableFixes.filter((f) => ['google-category', 'admissions-2027-banner', 'whatsapp-chat'].includes(f.id));
+  const headlineGain = headlineFixes.reduce((sum, f) => sum + gainFor(f), 0);
 
   const toggleFix = (id: string) => {
     setActiveFixIds((prev) =>
@@ -155,10 +83,10 @@ export const ScoreSimulator: React.FC = () => {
           <span>Interactive 25 · 25 · 25 · 25 Fix Simulator</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-          Simulate the Rapid 90-Day Leap to 85+ Ready Band
+          Simulate the 90-Day Leap Toward the Ready Band (80+)
         </h2>
         <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
-          Select any campus below. Notice how the baseline immediately matches the 25-25-25-25 audit (e.g. <strong>HFS Thane starts at 61 / 100</strong>). Toggle fixes to see the exact points won.
+          Select any campus below. Notice how the baseline immediately matches the 25-25-25-25 audit (e.g. <strong>{SCHOOLS_DATA[0].shortName} starts at {SCHOOLS_DATA[0].score} / 100</strong>). Each fix adds only the points that campus is actually missing.
         </p>
       </div>
 
@@ -169,82 +97,20 @@ export const ScoreSimulator: React.FC = () => {
         </span>
 
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          <button
-            onClick={() => setSelectedSchoolId('hfs-thane')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              selectedSchoolId === 'hfs-thane'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
-            }`}
-          >
-            HFS Thane (Base: 61)
-          </button>
-
-          <button
-            onClick={() => setSelectedSchoolId('hus-chennai')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              selectedSchoolId === 'hus-chennai'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
-            }`}
-          >
-            HUS Chennai (Base: 71)
-          </button>
-
-          <button
-            onClick={() => setSelectedSchoolId('hfs-powai')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              selectedSchoolId === 'hfs-powai'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
-            }`}
-          >
-            HFS Powai (Base: 54)
-          </button>
-
-          <button
-            onClick={() => setSelectedSchoolId('thriveni-academy')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              selectedSchoolId === 'thriveni-academy'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
-            }`}
-          >
-            Thriveni (Base: 54)
-          </button>
-
-          <button
-            onClick={() => setSelectedSchoolId('hfs-international')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              selectedSchoolId === 'hfs-international'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
-            }`}
-          >
-            HFS Int'l (Base: 47)
-          </button>
-
-          <button
-            onClick={() => setSelectedSchoolId('hts-panvel')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              selectedSchoolId === 'hts-panvel'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
-            }`}
-          >
-            HTS Panvel (Base: 38)
-          </button>
-
-          <button
-            onClick={() => setSelectedSchoolId('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-              selectedSchoolId === 'all'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
-            }`}
-          >
-            Network Mean (Base: 54.2)
-          </button>
+          {[...SCHOOLS_DATA.map((sc) => ({ id: sc.id, label: `${sc.shortName} (Base: ${sc.score})` })),
+            { id: 'all', label: `Network Mean (Base: ${AUDIT_METADATA.networkScore})` }].map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => setSelectedSchoolId(opt.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                selectedSchoolId === opt.id
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -256,10 +122,10 @@ export const ScoreSimulator: React.FC = () => {
             <span>Real-Time Math Engine</span>
           </div>
           <h3 className="text-2xl font-extrabold text-white">
-            {selectedSchoolId === 'all' ? 'Network Mean Simulation' : `${SCHOOLS_DATA.find((s) => s.id === selectedSchoolId)?.name || 'HFS Thane'}`}
+            {selectedSchoolId === 'all' ? 'Network Mean Simulation' : `${selectedSchool?.name}`}
           </h3>
           <p className="text-xs text-slate-300 leading-relaxed">
-            By executing these digital code & profile updates over 90 days, the institution leaps from the At-Risk band into the top-tier <strong>Admissions Ready Band (&gt;80)</strong> with zero civil construction costs.
+            Toggle the digital code & profile updates below to see how far they move this campus toward the <strong>Admissions Ready band (80+)</strong>, with zero civil construction costs.
           </p>
         </div>
 
@@ -270,7 +136,7 @@ export const ScoreSimulator: React.FC = () => {
             <div className="text-3xl sm:text-4xl font-extrabold font-mono text-slate-300">
               {baseScore.toFixed(1)} <span className="text-xs text-slate-500 font-normal">/ 100</span>
             </div>
-            <span className="text-[10px] text-rose-400 font-semibold block mt-0.5">At-Risk Band</span>
+            <span className="text-[10px] text-rose-400 font-semibold block mt-0.5">{bandFor(baseScore)}</span>
           </div>
 
           <div className="text-2xl text-slate-600 font-extrabold">→</div>
@@ -281,7 +147,7 @@ export const ScoreSimulator: React.FC = () => {
               {simulatedScore.toFixed(1)} <span className="text-xs text-slate-500 font-normal">/ 100</span>
             </div>
             <span className="text-[10px] text-emerald-300 font-semibold block mt-0.5">
-              +{scoreDelta.toFixed(1)} pts leap
+              +{scoreDelta.toFixed(1)} pts · {bandFor(simulatedScore)}
             </span>
           </div>
         </div>
@@ -345,7 +211,7 @@ export const ScoreSimulator: React.FC = () => {
                 <span className={`font-mono text-xs font-extrabold px-2.5 py-1 rounded-full shrink-0 ${
                   isApplied ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
                 }`}>
-                  +{fix.pointsAdded.toFixed(1)} pts
+                  +{gainFor(fix).toFixed(1)} pts
                 </span>
               </div>
 
@@ -383,7 +249,7 @@ export const ScoreSimulator: React.FC = () => {
           </span>
         </div>
         <p className="text-slate-200 text-xs sm:text-sm leading-relaxed">
-          With zero civil infrastructure costs, executing three high-leverage digital actions—reclassifying the Google Business Profile category to "Educational institution" (+13.0 pts), publishing an unequivocal 2027–28 admissions announcement (+8.0 pts), and deploying instant WhatsApp inquiry routing (+6.0 pts)—immediately propels <strong>{selectedSchoolId === 'all' ? 'the entire Hiranandani network' : SCHOOLS_DATA.find((s) => s.id === selectedSchoolId)?.shortName || 'HFS Thane'}</strong> from the current baseline of <strong>{baseScore.toFixed(1)} / 100</strong> to <strong>{(baseScore + 27).toFixed(1)} / 100</strong>, entering the top-tier Admissions Ready band (&gt;80) within 14 days.
+          With zero civil infrastructure costs, three high-leverage digital actions ({headlineFixes.map((f) => `${f.title} +${gainFor(f).toFixed(1)}`).join('; ') || 'none outstanding for this campus'}) move <strong>{selectedSchool ? selectedSchool.shortName : 'the Hiranandani network'}</strong> from <strong>{baseScore.toFixed(1)} / 100</strong> to <strong>{Math.min(100, baseScore + headlineGain).toFixed(1)} / 100</strong> ({bandFor(Math.min(100, baseScore + headlineGain))}). The full 90-day roadmap targets a network mean of <strong>{AUDIT_METADATA.targetScoreDay90}</strong>.
         </p>
       </div>
     </div>

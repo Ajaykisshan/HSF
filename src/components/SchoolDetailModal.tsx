@@ -90,7 +90,7 @@ export const SchoolDetailModal: React.FC<SchoolDetailModalProps> = ({ school, on
                 rel="noreferrer"
                 className="font-semibold text-rose-600 hover:underline flex items-center gap-1 mt-0.5"
               >
-                <span className="truncate">0 reviews (Suppressed)</span>
+                <span className="truncate">0 reviews visible</span>
                 <ExternalLink className="w-3 h-3 shrink-0" />
               </a>
               <span className="text-[10px] text-slate-400 block mt-0.5">
@@ -111,7 +111,7 @@ export const SchoolDetailModal: React.FC<SchoolDetailModalProps> = ({ school, on
             </div>
 
             <div>
-              <span className="text-slate-400 text-[11px] block font-medium">Verified Directory (Justdial)</span>
+              <span className="text-slate-400 text-[11px] block font-medium">Directory Listing (Justdial)</span>
               <a
                 href={competitorData.directoryUrl}
                 target="_blank"
@@ -122,9 +122,53 @@ export const SchoolDetailModal: React.FC<SchoolDetailModalProps> = ({ school, on
                 <ExternalLink className="w-3 h-3 shrink-0" />
               </a>
               <span className="text-[10px] text-slate-400 block mt-0.5">
-                Independent platform proof
+                Opens a search for the listing
               </span>
             </div>
+          </div>
+
+          {/* Social links exactly as found on the school's own website */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-bold text-slate-900 border-b border-slate-200 pb-2">
+              Social Links on the School Website (Checked 1 Oct 2026)
+            </h3>
+            {school.socialLinks.length === 0 ? (
+              <p className="text-rose-700 font-medium">
+                No social media links anywhere on {school.websiteUrl.replace('https://', '')}.
+              </p>
+            ) : (
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {school.socialLinks.map((link) => {
+                  const ok = link.status === 'linked';
+                  const label = { linked: 'Working', dead: 'Dead link', placeholder: 'Template placeholder', 'admin-only': 'Admin-only URL' }[link.status];
+                  return (
+                    <li
+                      key={link.platform}
+                      className={`p-2.5 rounded-xl border ${ok ? 'bg-emerald-50/60 border-emerald-200' : 'bg-rose-50/60 border-rose-200'}`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-bold text-slate-900">{link.platform}</span>
+                        <span className={`text-[10px] font-bold uppercase ${ok ? 'text-emerald-700' : 'text-rose-700'}`}>{label}</span>
+                      </div>
+                      {link.url ? (
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-600 hover:underline flex items-center gap-1 mt-0.5 break-all"
+                        >
+                          {link.url.replace(/^https?:\/\/(www\.)?/, '')}
+                          <ExternalLink className="w-3 h-3 shrink-0" />
+                        </a>
+                      ) : (
+                        <span className="text-slate-500 block mt-0.5">Links to "#" (goes nowhere)</span>
+                      )}
+                      {link.note && <span className="text-[10px] text-slate-500 block mt-0.5">{link.note}</span>}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           {/* The 4 Core Admissions Dimensions */}
